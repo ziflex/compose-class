@@ -12,7 +12,16 @@
     "build": "npm run test && npm run clean && babel src --out-dir lib",
     "prepublish": "npm run build"
   },
-  "author": "",
+  "keywords": [
+    "class",
+    "mixin",
+    "decorator"
+  ],
+  "author": "Tim Voronov <ziflex@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ziflex/compose-class.git"
+  },
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.16.0",
