@@ -79,9 +79,9 @@ This is the main motivaton of writing this package.
 
 If mixin has defined ``constructor`` it will be invoked before main class constructor.
 
-// entity-mixin.js
 
 ````javascript
+    // entity-mixin.js
 
     import Symbol from 'es6-symbol';
 
@@ -101,8 +101,8 @@ If mixin has defined ``constructor`` it will be invoked before main class constr
 
 ````
 
-// user.js
 ````javascript
+// user.js
 
     import composeClass from 'compose-class';
     import EntityMixin from './entity-mixin';
@@ -148,28 +148,28 @@ Sometimes using mixins is not enough to build a complex type wtih many rules. In
 
 In order to apply decorator to an instance, it needs to pass decorator factory to ``decorators`` array which accepts 2 arguments: name and function.
 
-// assert-decorator.js
 ````javascript
+// assert-decorator.js
 
-export default function AssertDecorator(name, method) {
-    if (name.indexOf('set') < 0) {
-        return method;
-    }
-
-    return function checkInput(value) {
-        if (!value) {
-            throw new Error('Value is missed');
+    export default function AssertDecorator(name, method) {
+        if (name.indexOf('set') < 0) {
+            return method;
         }
 
-        return method.apply(this, value);
-    };
-}
+        return function checkInput(value) {
+            if (!value) {
+                throw new Error('Value is missed');
+            }
+
+            return method.apply(this, value);
+        };
+    }
 
 ````
 
-// user.js
 
 ````javascript
+// user.js
 
     import composeClass from 'compose-class';
     import EntityMixin from './entity-mixin';
