@@ -110,7 +110,7 @@ const omitPredifinedProps = prop => !isPredifinedProp(prop);
   * @param {Object | Function} definition - Class definition.
   * @return {Function} Constructor.
 */
-export default function createClass(definition) {
+module.exports = function createClass(definition) {
     if (!definition) {
         throw new Error('Class definition is required');
     }
@@ -169,4 +169,4 @@ export default function createClass(definition) {
     }
 
     return Constructor;
-}
+};

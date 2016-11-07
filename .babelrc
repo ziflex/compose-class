@@ -4,6 +4,7 @@
       "stage-0"
     ],
     "plugins": [
-        "transform-node-env-inline"
-    ]
+        ["transform-es2015-modules-umd"]
+    ],
+    "moduleId": "composeClass"
 }

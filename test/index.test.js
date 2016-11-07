@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-expressions, import/no-extraneous-dependencies */
+/* eslint-disable global-require, no-unused-expressions, import/no-extraneous-dependencies */
 import { expect } from 'chai';
 import sinon from 'sinon';
 import createClass from '../src/index';
@@ -350,4 +350,10 @@ it('should create a class and apply decorators', () => {
 
     expect(genericSpy.callCount).to.eql(4);
     expect(getNameSpy.callCount).to.eql(2);
+});
+
+it('should be exported as "commonjs" module', () => {
+    const composeClass = require('../src/index');
+
+    expect(typeof composeClass === 'function').to.be.true;
 });
