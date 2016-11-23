@@ -1,4 +1,8 @@
-const NATIVE_CONSTRUCTOR = Object.prototype.constructor;
+const isNativeConstructor = (i) => {
+    return i === Object.prototype.constructor ||
+      i === Object.constructor ||
+      i === Function;
+};
 const isArray = Array.isArray;
 const isFunction = i => typeof i === 'function';
 const isObject = i => typeof i === 'object';
@@ -128,7 +132,7 @@ module.exports = function createClass(definition) {
     forEach(definition.mixins, (mixin) => {
         if (isObject(mixin)) {
             // collect all mixin initializers
-            if (mixin.constructor !== NATIVE_CONSTRUCTOR) {
+            if (!isNativeConstructor(mixin.constructor)) {
                 initializers.push(mixin.constructor);
             }
 
