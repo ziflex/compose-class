@@ -1,24 +1,42 @@
-const isNativeConstructor = (i) => {
+const isArray = Array.isArray;
+
+function isNativeConstructor(i) {
     return i === Object.prototype.constructor ||
       i === Object.constructor ||
       i === Function;
-};
-const isArray = Array.isArray;
-const isFunction = i => typeof i === 'function';
-const isObject = i => typeof i === 'object';
-const isArguments = (i) => {
+}
+
+function isFunction(i) {
+    return typeof i === 'function';
+}
+
+function isObject(i) {
+    return typeof i === 'object';
+}
+
+function isArguments(i) {
     return isObject(i) &&
         typeof i.length === 'number' &&
         hasOwnProperty.call(i, 'callee');
-};
-const isNativeProp = (prop) => {
+}
+
+function isNativeProp(prop) {
     return prop === 'constructor' || prop === 'prototype';
-};
-const isPredifinedProp = (prop) => {
+}
+
+function isPredifinedProp(prop) {
     return prop === 'statics' ||
         prop === 'mixins' ||
         prop === 'decorators';
-};
+}
+
+function omitNativeProps(prop) {
+    return !isNativeProp(prop);
+}
+
+function omitPredifinedProps(prop) {
+    return !isPredifinedProp(prop);
+}
 
 function eachArrayLike(collection, iteratee, startFrom = -1) {
     let index = startFrom;
@@ -105,8 +123,26 @@ function functions(target) {
     return result;
 }
 
-const omitNativeProps = prop => !isNativeProp(prop);
-const omitPredifinedProps = prop => !isPredifinedProp(prop);
+function createConstructor(ctor, initializers) {
+    if (initializers == null && ctor != null) {
+        return ctor;
+    }
+
+    if (initializers != null && ctor != null) {
+        return function Class(...args) {
+            forEach(initializers, i => i.call(this));
+            ctor.apply(this, args);
+        };
+    }
+
+    if (initializers != null && ctor == null) {
+        return function Class() {
+            forEach(initializers, i => i.call(this));
+        };
+    }
+
+    return function Class() {};
+}
 
 /**
   * Creates class.
@@ -123,40 +159,56 @@ module.exports = function createClass(definition) {
         return definition;
     }
 
-    const decorators = definition.decorators ? definition.decorators : null;
-    const statics = definition.statics ? omit(definition.statics, omitNativeProps) : null;
-    const initializers = [];
-    const mixins = [];
+    let decorators,
+        statics,
+        initializers,
+        mixins;
 
-    // prepearing mixins and their initializers
-    forEach(definition.mixins, (mixin) => {
-        if (isObject(mixin)) {
-            // collect all mixin initializers
-            if (!isNativeConstructor(mixin.constructor)) {
-                initializers.push(mixin.constructor);
+    if (definition.statics != null) {
+        statics = omit(definition.statics, omitNativeProps);
+    }
+
+    if (definition.decorators != null) {
+        decorators = definition.decorators;
+    }
+
+    if (isArray(definition.mixins) === true && definition.mixins.length > 0) {
+        initializers = [];
+        mixins = [];
+
+        // prepearing mixins and their initializers
+        forEach(definition.mixins, (mixin) => {
+            if (isObject(mixin)) {
+                // collect all mixin initializers
+                if (!isNativeConstructor(mixin.constructor)) {
+                    initializers.push(mixin.constructor);
+                }
+
+                // remove built-in methods
+                mixins.push(omit(mixin, omitNativeProps));
             }
+        });
+    }
 
-            // remove built-in methods
-            mixins.push(omit(mixin, omitNativeProps));
-        }
-    });
+    const prototype = omit(definition, omitPredifinedProps);
 
-    // creating new constructor
-    const Constructor = ((function createConstructor(constructor, inits) {
-        return function Surrogate(...args) {
-            forEach(inits, init => init.apply(this));
-            constructor.apply(this, args);
-        };
-    })(definition.constructor, initializers));
+    // creating a new constructor
+    const Constructor = createConstructor(definition.constructor, initializers);
 
-    assign(Constructor, statics);
+    if (statics != null) {
+        assign(Constructor, statics);
+    }
 
     // methods from definition have higher priority
-    // i.e. if mixin and definition has the same methods
+    // i.e. if mixin and definition has same methods
     // definition's version will be taken
-    assign(Constructor.prototype, ...mixins, omit(definition, omitPredifinedProps));
+    if (isArray(mixins) === true) {
+        assign(Constructor.prototype, ...mixins, prototype);
+    } else {
+        assign(Constructor.prototype, prototype);
+    }
 
-    if (isArray(decorators)) {
+    if (isArray(decorators) === true) {
         const methods = functions(Constructor.prototype);
 
         forEach(methods, (name) => {

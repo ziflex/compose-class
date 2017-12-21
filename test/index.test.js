@@ -33,6 +33,7 @@ it('should create a basic class', () => {
 });
 
 it('should create a basic class with constructor', () => {
+    debugger;
     const Class = createClass({
         constructor(name) {
             this._name = name;

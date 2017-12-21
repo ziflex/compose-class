@@ -1,6 +1,6 @@
 {
   "name": "compose-class",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Utility function for creating JS classes using mixins and decorators",
   "main": "lib/index.js",
   "scripts": {
