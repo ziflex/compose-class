@@ -123,6 +123,12 @@ function functions(target) {
     return result;
 }
 
+/**
+ * Creates a constructor function that handles mixin initializers and main constructor.
+ * @param {Function} ctor - Main constructor function
+ * @param {Array} initializers - Array of mixin constructor functions
+ * @returns {Function} Combined constructor function
+ */
 function createConstructor(ctor, initializers) {
     if (initializers == null && ctor != null) {
         return ctor;
@@ -145,11 +151,21 @@ function createConstructor(ctor, initializers) {
 }
 
 /**
-  * Creates class.
-  * Possible to extend passed definition with mixins.
-  * @param {Object | Function} definition - Class definition.
-  * @return {Function} Constructor.
-*/
+ * Creates a class using composition with mixins, decorators, and static methods.
+ *
+ * @param {Object|Function} definition - Class definition object or constructor function
+ * @param {Function} [definition.constructor] - Constructor function for the class
+ * @param {Array} [definition.mixins] - Array of mixin objects to merge into the class
+ * @param {Array} [definition.decorators] - Array of decorator functions to apply to methods
+ * @param {Object} [definition.statics] - Object containing static methods for the constructor
+ * @returns {Function} Constructor function for the new class
+ *
+ * @example
+ * const MyClass = createClass({
+ *   constructor(name) { this.name = name; },
+ *   getName() { return this.name; }
+ * });
+ */
 module.exports = function createClass(definition) {
     if (!definition) {
         throw new Error('Class definition is required');

@@ -1,7 +1,7 @@
 {
   "name": "compose-class",
   "version": "1.0.3",
-  "description": "Utility function for creating JS classes using mixins and decorators",
+  "description": "Utility function for creating JS classes using mixins and decorators - Composition over inheritance",
   "main": "lib/index.js",
   "scripts": {
     "lint": "eslint -c ./.eslintrc.json src",
@@ -15,7 +15,13 @@
   "keywords": [
     "class",
     "mixin",
-    "decorator"
+    "decorator",
+    "composition",
+    "inheritance",
+    "javascript",
+    "es6",
+    "factory",
+    "builder"
   ],
   "author": "Tim Voronov <ziflex@gmail.com>",
   "repository": {
